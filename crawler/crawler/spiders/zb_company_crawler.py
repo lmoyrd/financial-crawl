@@ -173,7 +173,7 @@ class EIDBaseCompanySpider(scrapy.Spider):
         for stock in self.stocks:
             base_url = self.target_template_url % (stock)
             for value in range(1, self.pageCount + 1):
-                url = f'{base_url}_{value}.html'
+                url = f'{base_url}_{value}_f.html'
                 yield scrapy.Request(url=url, callback=self.parse, meta={"stock": stock, "page": value}, headers=self.headers, cookies=self.cookies)
 
     def parse(self, response):
@@ -387,6 +387,7 @@ class EIDBaseCompanySpider(scrapy.Spider):
             print(f'is_ipo_existed:{trigger_item_pipeline}, is_ipo_updated:{is_ipo_updated}')
         
         if trigger_item_pipeline or self.download_all:
+            print(ipo_item.to_dict())
             yield ipo_item
             for file_item in file_items:
                 yield file_item

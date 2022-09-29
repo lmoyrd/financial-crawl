@@ -8,13 +8,13 @@ import copy
 import os
 from pydash import objects
 
-from scrapy import signals
-from itemloaders import ItemLoader
-import attrs
-from ..items.kcb import CompanyItem, IPOItem, CompanyManagerItem, IntermediaryItem, KCBIntermediaryItem, KCBIntermediaryPersonItem, KCBCompanyMilestoneItem, KCBCompanyProcessItem,KCBFileItem, KCBCompanyOtherItem
-from ..util.constant import COMPANY_TYPE, KCB_STAGE
-from ..util import util
-from ..util import jsonp # 对应模块 ../util/jsonp.py, 模块加载是以脚本所在目录结构为根目录
+from crawler.items.base import MarketCountItem
+from crawler.items.kcb import CompanyItem, IPOItem, CompanyManagerItem, IntermediaryItem, KCBIntermediaryItem, KCBIntermediaryPersonItem,KCBCompanyMilestoneItem, KCBCompanyProcessItem,KCBFileItem, KCBCompanyOtherItem
+from crawler.util.constant import COMPANY_TYPE,KCB_STAGE, STOCK_EXCHANGE_TYPE
+from crawler.util import util
+from crawler.util import decorator
+from crawler.util import jsonp # 对应模块 ../util/jsonp.py, 模块加载是以脚本所在目录结构为根目录
+from crawler.util.postgre import KCBPostgreConnector
 
 # from crawler.items import CrawlerItem
 
@@ -23,8 +23,8 @@ from ..util import jsonp # 对应模块 ../util/jsonp.py, 模块加载是以脚�
 # 代码可以和kcb_company_cralwer.py合并，去除冗余代码
 # =============================================================================
 class KCBCompanyDetailSpider(scrapy.Spider):
-    
-
+    name = "kcb_company_detail"
+    custom_settings = {'ITEM_PIPELINES': {'crawler.pipelines.KCBPipeline': 300}}
     # params = {
     #     # "jsonCallBack": 'jsonCallback' + str(round(time.time() * 1000)),
     #     "isPagination": True,
@@ -98,18 +98,7 @@ class KCBCompanyDetailSpider(scrapy.Spider):
     crawl_count = 0
     
     project_id = 67
-
-    @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs):
-        spider = super(KCBCompanyDetailSpider, cls).from_crawler(crawler, *args, **kwargs)
-        crawler.signals.connect(spider.spider_opened, signal=signals.spider_opened)
-        return spider
-
-
-    def spider_opened(self, spider):
-        from_crawl = util.get_crawl()
-        print('from_crawl', from_crawl)
-
+    
     def get_current_time(self): 
         current_milli_time = lambda: int(round(time.time() * 1000))
         return current_milli_time()
@@ -236,6 +225,7 @@ class KCBCompanyDetailSpider(scrapy.Spider):
                 file_item = KCBFileItem()
                 file_item.load_item(retrive_dict = file)
                 file_item.company_id = company_item.id
+                yield file_item
                 #print(file_item.to_dict())
 
             csrc_files = self.result[self.params[4]['type']]
@@ -247,15 +237,6 @@ class KCBCompanyDetailSpider(scrapy.Spider):
                 file_item.company_id = company_item.id
                 yield file_item
             # return None
-            result = str(json.dumps(self.result, ensure_ascii=False,indent=4)).encode()
-            # 代码执行根目录是从运行目录开始，scrapy文件目录结构是 projectname/projectname/spiders,spider存放了所有的爬虫，scrapy运行的目录结构是projectname/projectname
-            # 所以这里的文件路径计算规则只要在往上一层即可
-            file_prefix = util.get_crawl_file_prefix(os.getcwd())
-            filename = f'{file_prefix}-{self.name}.json'
             
-            with open(filename, 'wb') as file:
-                file.write(result)
-                return None
-        # else:
             
             

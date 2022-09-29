@@ -90,7 +90,7 @@ class PostgreConnector():
         return [result_sql, tuple_sql]
     
     def _build_select_sql(self, primary_string, primary_value, table) -> Tuple:
-        result_sql = 'select * from \"%s\" where %s '% (table, primary_string)
+        result_sql = 'select * from \"%s\" where %s'% (table, primary_string)
         return [f'{result_sql}=%s;', (str(primary_value), )]
     
     def execute(self, sql, value) -> None: 
@@ -126,7 +126,7 @@ class KCBPostgreConnector(PostgreConnector):
             id, name, abbr, csrc_company_type, csrc_code, csrc_desc, province, city, csrc_parent_code, loc
         """,item_dict=company_dict, primary_key='id', table='COMPANY')
         content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_company(company_dict['id'])
 
     def is_ipo_updated(self, project_id, update_time, update_date) -> bool:
@@ -151,8 +151,7 @@ class KCBPostgreConnector(PostgreConnector):
                 accounting_firm_name,rating_agency_id, rating_agency_name, accept_apply_date, law_office_name, asset_evaluation_institute_id, asset_evaluation_institute_name,
                 company_id, update_date, create_date, company_name, stage_name, stage_status_name, issue_market, csrc_desc,
                 accept_apply_time, update_time, create_time""",item_dict=project_dict, primary_key='project_id', table='KCB_IPO')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_ipo(project_dict['project_id'])
 
     def __get_process__(self, id, table) -> list:
@@ -166,8 +165,7 @@ class KCBPostgreConnector(PostgreConnector):
         if extra_key_string != '':
             key_string += f',{extra_key_string}'
         [result_sql, tuple_sql] = self._build_sql_(key_string=key_string,item_dict=dict, primary_key='id', table=table)
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.__get_process__(dict['id'], table)
     
     def get_milestone(self, milestone_id) -> list:
@@ -196,8 +194,7 @@ class KCBPostgreConnector(PostgreConnector):
 
     def insert_or_update_file(self, file_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""file_id, project_id, company_id, company_name, stage, stage_name, file_name, file_url, file_size, file_type_of_process, file_type_of_audit, file_type_of_process_desc, file_type_of_audit_desc, publish_time, publish_date""",item_dict=file_dict, primary_key='file_id', table='KCB_FILE')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_file(file_dict['file_id'])
 
     def get_intermediary(self, intermediary_id) -> list:
@@ -208,8 +205,7 @@ class KCBPostgreConnector(PostgreConnector):
 
     def insert_or_update_intermediary(self, intermediary_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""id, name, abbr, csrc_company_type, csrc_code, csrc_desc, province, city, csrc_parent_code, loc""",item_dict=intermediary_dict, primary_key='id', table='INTERMEDIARY')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_intermediary(intermediary_dict['id'])
 
     def get_company_manager(self, manager_id) -> list:
@@ -220,8 +216,7 @@ class KCBPostgreConnector(PostgreConnector):
 
     def insert_or_update_company_manager(self, manager_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""id,name, company_id, company_name, job_title""",item_dict=manager_dict, primary_key='id', table='COMPANY_MANAGER')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_company_manager(manager_dict['id'])
     
     def get_intermediary_item(self, project_id, intermediary_id) -> list:
@@ -229,13 +224,13 @@ class KCBPostgreConnector(PostgreConnector):
         select * from \"KCB_INTERMEDIARY\" where project_id = %s and intermediary_id = %s;
         """, (project_id, intermediary_id, ),)
         self.cursor.execute(content)
+        self.commit()
         files = self.cursor.fetchall()
         return files
 
     def insert_or_update_intermediary_item(self, item_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""project_id, intermediary_id, type, name, intermediary_order""",item_dict=item_dict, primary_key='project_id, intermediary_id', table='KCB_INTERMEDIARY')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_intermediary_item(item_dict['project_id'], item_dict['intermediary_id'])
     
     def get_person_item(self, person_id) -> list:
@@ -246,8 +241,7 @@ class KCBPostgreConnector(PostgreConnector):
 
     def insert_or_update_person_item(self, person_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""project_id, intermediary_id, id, name, job_type, job_title""",item_dict=person_dict, primary_key='id', table='KCB_INTERMEDIARY_PERSON')
-        content = self.cursor.mogrify(result_sql, tuple_sql)        
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_person_item(person_dict['id'])
 
 
@@ -307,8 +301,7 @@ class CYBPostgreConnector(PostgreConnector):
         if extra_key_string != '':
             key_string += f',{extra_key_string}'
         [result_sql, tuple_sql] = self._build_sql_(key_string=key_string,item_dict=dict, primary_key='id', table=table)
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.__get_process__(dict['id'], table)
     
     def get_milestone(self, milestone_id) -> list:
@@ -327,8 +320,7 @@ class CYBPostgreConnector(PostgreConnector):
 
     def insert_or_update_other(self, other_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""id, project_id, company_id, company_name, timestamp, date, reason""",item_dict=other_dict, primary_key='id', table='CYB_OTHER')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_other(other_dict['id'])
 
     def get_file(self, file_id) -> list:
@@ -339,8 +331,7 @@ class CYBPostgreConnector(PostgreConnector):
 
     def insert_or_update_file(self, file_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""file_id, project_id, company_id, company_name, stage, stage_name, file_name, file_url, file_size, file_type_of_process, file_type_of_audit, file_type_of_process_desc, file_type_of_audit_desc, publish_time, publish_date""",item_dict=file_dict, primary_key='file_id', table='CYB_FILE')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_file(file_dict['file_id'])
 
     def get_intermediary(self, intermediary_id) -> list:
@@ -351,8 +342,7 @@ class CYBPostgreConnector(PostgreConnector):
 
     def insert_or_update_intermediary(self, intermediary_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""project_id, intermediary_id, type, name, intermeidary_order""",item_dict=intermediary_dict, primary_key='id', table='INTERMEDIARY')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_intermediary(intermediary_dict['id'])
 
     
@@ -361,13 +351,13 @@ class CYBPostgreConnector(PostgreConnector):
         select * from \"CYB_INTERMEDIARY\" where project_id = %s and intermediary_id = %s;
         """, (str(project_id), str(intermediary_id), ),)
         self.cursor.execute(content)
+        self.commit()
         files = self.cursor.fetchall()
         return files
 
     def insert_or_update_intermediary_item(self, item_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""project_id, intermediary_id, type, name, intermediary_order""",item_dict=item_dict, primary_key='project_id, intermediary_id', table='CYB_INTERMEDIARY')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_intermediary_item(item_dict['project_id'], item_dict['intermediary_id'])
     
     def get_person_item(self, person_id) -> list:
@@ -378,8 +368,7 @@ class CYBPostgreConnector(PostgreConnector):
 
     def insert_or_update_person_item(self, person_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""project_id, intermediary_id, id, name, job_type, job_title""",item_dict=person_dict, primary_key='id', table='CYB_INTERMEDIARY_PERSON')
-        content = self.cursor.mogrify(result_sql, tuple_sql)        
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_person_item(person_dict['id'])
 
 class ZBPostgreConnector(PostgreConnector):
@@ -418,8 +407,7 @@ class ZBPostgreConnector(PostgreConnector):
         if extra_key_string != '':
             key_string += f',{extra_key_string}'
         [result_sql, tuple_sql] = self._build_sql_(key_string=key_string,item_dict=dict, primary_key='id', table='ZB_PROCESS')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_process(dict['id'])
     
     def get_file(self, file_id) -> list:
@@ -430,6 +418,5 @@ class ZBPostgreConnector(PostgreConnector):
 
     def insert_or_update_file(self, file_dict) -> object:
         [result_sql, tuple_sql] = self._build_sql_(key_string="""file_id, project_id, company_id, company_name, stage, stage_name, file_name, file_url, file_type_of_process, file_type_of_audit, file_type_of_process_desc, file_type_of_audit_desc, publish_time, publish_date""",item_dict=file_dict, primary_key='file_id', table='ZB_FILE')
-        content = self.cursor.mogrify(result_sql, tuple_sql)
-        self.cursor.execute(content)
+        self.execute(result_sql, tuple_sql)
         return self.get_file(file_dict['file_id'])

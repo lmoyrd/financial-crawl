@@ -152,20 +152,74 @@ def find_number(word, default_number = None):
     return default_number
         
 
-def get_fund_raise_number(fund_rasing_page):
-    billion_number = -1
+def get_tables_from_page(page):
     table_settings={
         # 存在表格没有边框的情况，这种情况就没法解析了，设置了这个属性也没用。如苏州新大陆精密科技股份有限公司
         'edge_min_length': 0,
     }
-    tables = fund_rasing_page.find_tables(table_settings={
+    tables = page.find_tables(table_settings={
          # 把募资金额的table的line宽度搞宽一些，但是架不住有错误的
         'snap_tolerance':12,
 
     })
 
     if len(tables) == 0 :
-        tables = fund_rasing_page.find_tables(table_settings=table_settings)
+        tables = page.find_tables(table_settings=table_settings)
+
+    return tables
+
+def get_funding_rasing_number_from_footer(table_footer):
+    billion_number = -1
+    all_counts = [item for (index, item) in enumerate(table_footer) if item != None and is_number(item.replace(',',''))]
+    print(all_counts)
+    # 第二遍，取数逻辑
+    # 数据优先级先取美制数字10,000 ；再取带小数位19.00；最后取整数
+    counts = [item for (index, item) in enumerate(all_counts) if ',' in item]
+
+    if len(counts) == 0:
+        counts = [item for (index, item) in enumerate(all_counts) if is_float(item)]
+        if len(counts) == 0:
+            counts = [item for (index, item) in enumerate(all_counts) if is_int(item)]
+
+    if len(counts) > 0:
+        # 取数逻辑
+        counts = list(map(lambda x: convert_to_number(x.replace(',','')), counts))
+        if len(counts) > 0:
+            # 一般在最后一个数字，找最后一个数字返回
+            target_count = round(counts[-1] / 10000, 3)
+            print('target_count', target_count)
+            if 1 > target_count > 0:
+                billion_number = counts[-1]
+            else:
+                billion_number = target_count  
+    return billion_number
+
+def get_fund_raise_number_in_next_page(page):
+    billion_number = -1
+    tables = get_tables_from_page(page)
+    if len(tables) > 0:
+        # 第一个table是募资资金表
+        table_rows = tables[0].extract()
+        print('rasing', table_rows)
+        target_rows_index = -1
+        for index, table_row in enumerate(table_rows):
+            # 合计或总计
+            target_rows_index = [index for (index, item) in enumerate(table_row) if item != None and item.replace(' ','').replace('\n', '').find('合计') > -1]
+            target_rows_index = index if len(target_rows_index) > 0 else -1
+        
+        if target_rows_index > -1:
+            footer = table_rows[target_rows_index]
+        else:
+            footer = table_rows[-1]
+
+        billion_number = get_funding_rasing_number_from_footer(footer)
+        # 第一个table是募资资金表
+        # table = tables[0].extract()
+    return billion_number
+
+def get_fund_raise_number(fund_rasing_page, index, pdf):
+    billion_number = -1
+    tables = get_tables_from_page(fund_rasing_page)
 
     if len(tables) > 0:
         # 第一个table是募资资金表
@@ -193,11 +247,13 @@ def get_fund_raise_number(fund_rasing_page):
             ))   
 
         target_index = -1
+        # 合计或总计
+        footer_has_count = [index for (index, item) in enumerate(footer) if item != None and item.replace(' ','').replace('\n', '').find('合计') > -1]
 
         try:
             while billion_number == -1:
                 target_index = next(target_indexs)
-                if len(header) == len(footer) and target_index > 0 and footer[target_index] != None:
+                if len(header) == len(footer) and target_index > 0 and footer[target_index] != None and len(footer_has_count) > 0:
                     target_number = convert_to_number(footer[target_index].replace(',',''))
                     if target_number is not None:
                         billion_number = round(target_number / 10000, 3)
@@ -212,29 +268,37 @@ def get_fund_raise_number(fund_rasing_page):
             pass
         
         if billion_number < 0:
-            # 直接找footer最大的数字返回，当然有的是项目总额
-            # 第一遍，直接过滤出所有数字
-            all_counts = [item for (index, item) in enumerate(footer) if item != None and is_number(item.replace(',',''))]
-            print(all_counts)
-            # 第二遍，取数逻辑
-            # 数据优先级先取美制数字10,000 ；再取带小数位19.00；最后取整数
-            counts = [item for (index, item) in enumerate(all_counts) if ',' in item]
+            print(footer)
+            
+            if len(footer_has_count) == 0 and index + 1 < len(pdf.pages):    
+                billion_number = get_fund_raise_number_in_next_page(pdf.pages[index + 1])
+                print('footer_has_count', billion_number)
+            
+            if billion_number == -1:
+                
+                # 直接找footer最大的数字返回，当然有的是项目总额
+                # 第一遍，直接过滤出所有数字
+                all_counts = [item for (index, item) in enumerate(footer) if item != None and is_number(item.replace(',',''))]
+                print(all_counts)
+                # 第二遍，取数逻辑
+                # 数据优先级先取美制数字10,000 ；再取带小数位19.00；最后取整数
+                counts = [item for (index, item) in enumerate(all_counts) if ',' in item]
 
-            if len(counts) == 0:
-                counts = [item for (index, item) in enumerate(all_counts) if is_float(item)]
                 if len(counts) == 0:
-                    counts = [item for (index, item) in enumerate(all_counts) if is_int(item)]
+                    counts = [item for (index, item) in enumerate(all_counts) if is_float(item)]
+                    if len(counts) == 0:
+                        counts = [item for (index, item) in enumerate(all_counts) if is_int(item)]
 
-            if len(counts) > 0:
-                # 取数逻辑
-                counts = list(map(lambda x: convert_to_number(x.replace(',','')), counts))
                 if len(counts) > 0:
-                    # 一般在最后一个数字，找最后一个数字返回
-                    target_count = round(counts[-1] / 10000, 3)
-                    if 1 > target_count > 0:
-                        billion_number = counts[-1]
-                    else:
-                        billion_number = target_count
+                    # 取数逻辑
+                    counts = list(map(lambda x: convert_to_number(x.replace(',','')), counts))
+                    if len(counts) > 0:
+                        # 一般在最后一个数字，找最后一个数字返回
+                        target_count = round(counts[-1] / 10000, 3)
+                        if 1 > target_count > 0:
+                            billion_number = counts[-1]
+                        else:
+                            billion_number = target_count
             if billion_number < -1:
                 pdfparse_error_builder.create_error(PdfParserError(
                     PdfParserErrorEnum.TOTAL_FUND_NOT_IN_TABLE.value,
@@ -408,8 +472,8 @@ def parse_pdf(path_or_buffer):
             (toc_list, pdf_page_number_offset) = parse_toc(pdf)
             
             # 2.找募资金额所在页码 
-            toc_funds_iter = (toc for toc in toc_list if toc.find('募集资金运用') > -1)
-            toc_funds = [toc for toc in toc_list if toc.find('募集资金运用') > -1]
+            toc_funds_iter = (toc for toc in toc_list if toc.find('募集资金') > -1)
+            toc_funds = [toc for toc in toc_list if toc.find('募集资金') > -1]
             try:
                 toc_fund = next(toc_funds_iter)
                 fund_rasing_page_number = re.search(r'\d+',toc_fund).group()
@@ -437,7 +501,7 @@ def parse_pdf(path_or_buffer):
                 for i in range(fund_rasing_page_number - 2,fund_rasing_page_number + 3):
                     page = pdf.pages[i]
                     print('当前页', page)
-                    current_billion_number = get_fund_raise_number(page)
+                    current_billion_number = get_fund_raise_number(page,i, pdf)
                     if current_billion_number == None:
                         tables = page.find_tables()
                         if len(tables) > 0:

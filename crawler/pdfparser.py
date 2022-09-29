@@ -1,9 +1,13 @@
-from copy import deepcopy
+
+
+import argparse
 import filetype
 import os
 import re
 import urllib.request
 import pdfplumber
+
+from copy import deepcopy
 from common import pdfparser
 from common.postgre import ZBPostgreConnector
 
@@ -26,16 +30,31 @@ def connect_db():
     return ZBPostgreConnector()
 
 
+argv_parser = argparse.ArgumentParser()
+
+'''
+runfile('文件路径', args='-t="10:56"', wdir='文件路径')
+'''
+argv_parser.add_argument('-pa','--parse-all', default=False, type=bool, help='是否强制抓取所有数据，默认为否，只更新有变更的数据')
 
 if __name__ == '__main__':
+
+    args = argv_parser.parse_args()
+    # Namespace => dict
+    # args_dict = vars(args)
+    parse_all = args.parse_all
+
     # 先找到所有为0的IPO数据
     connector = connect_db()
     # 不对，如果有更新也需要重跑
-    ipos = connector.get_empty_ipo()
+    if parse_all == True:
+        ipos = connector.get_all_ipos()
+    else:
+        ipos = connector.get_empty_ipo()
 
     path=os.path.abspath(os.path.join(os.getcwd(), "../temp/files"))
     files=file_name(path)
-
+    error_files = []
     for index, ipo in enumerate(ipos):
         
         [lastest_file, *others] = connector.get_ipo_lasted_file(ipo['project_id'])
@@ -59,16 +78,22 @@ if __name__ == '__main__':
             
             total_fund_rasing = pdfparser.parse_pdf(file_path)
             
-            if total_fund_rasing > 0:
+            if 560 > total_fund_rasing > 0:
                 
                 clone_ipo = deepcopy(ipo)
                 clone_ipo['total_fund_rasing'] = total_fund_rasing
                 connector.update_ipo(clone_ipo, 'total_fund_rasing')
 
-                print(f'总计{len(ipos)} 当前进度 {index}; ',ipo['project_id'], f'募资{total_fund_rasing}亿元')
-
-                
-                
+                print(f'总计{len(ipos)} 当前进度 {index + 1}; ',ipo['project_id'], f'募资{total_fund_rasing}亿元')
+            else: 
+                error_files.append({
+                    'company_name': ipo['project_id'],
+                    'total_fund_rasing': total_fund_rasing,
+                })
+                print(f'总计{len(ipos)} 当前进度 {index + 1}; ',ipo['project_id'], f'募资{total_fund_rasing}亿元')
+    if len(error_files) > 0:
+        print(error_files)
+        print(f'解析成功：{len(ipos) - len(error_files)}, 失败：{len(error_files)}, 解析失败率：{len(error_files) / len(ipos)}')
 
     # path=os.path.abspath(os.path.join(os.getcwd(), "../temp/files"))
     # files=file_name(path)
@@ -78,7 +103,7 @@ if __name__ == '__main__':
         
     #     # if '新湖期货股份有限公司', '浙江峻和科技股份有限公司', '苏州新大陆精密科技股份有限公司', '开源证券股份有限公司', '中路交科科技股份有限公司'
     #     # if '上海金标文化创意股份' in file_path:
-    #     if '郑州三晖电气股份有限公司' in file_path:
+    #     if '大陆精密科技' in file_path:
     #         print(file_path)
     #         pdfparser.parse_pdf(file_path)
     #     # kind = filetype.guess(os.path.join(path, files[i]))

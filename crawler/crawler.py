@@ -131,27 +131,28 @@ if __name__=="__main__":
     [hour, minute] = util.get_time_in_array(args.time)
     spider_conf['download_all'] = args.download_all
     now = args.now
+    sleep_time = 0
     if hour >= 0 and minute >= 0:
         print(hour, minute)
         next_date_time = dt.datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
         
-        sleep_time = (next_date_time - dt.datetime.now().replace(microsecond=0)).total_seconds()
+        next_time = (next_date_time - dt.datetime.now().replace(microsecond=0)).total_seconds()
         
-        if sleep_time <0:
+        if next_time <0:
             tomorrow = (
                 dt.datetime.now() + dt.timedelta(days=1)
                 ).replace(hour=hour, minute=minute, second=0, microsecond=0)
             
             sleep_time = (tomorrow - dt.datetime.now()).total_seconds()
             print(sleep_time)
-        elif sleep_time == 0:
-            sleep_time = 1
+        elif next_time == 0:
+            next_time = 1
         
     if now:
         sleep_time = 1
-    if sleep_time > 0:
-        deferred = Deferred()
-        deferred.addCallback(crawl_schedule)
-        reactor.callLater(sleep_time, deferred.callback,[hour, minute])
-        reactor.run()
+    start_time = sleep_time if next_time > 0 else 0
+    deferred = Deferred()
+    deferred.addCallback(crawl_schedule)
+    reactor.callLater(start_time, deferred.callback,[hour, minute])
+    reactor.run()
     

@@ -31,12 +31,20 @@ class ZBPostgreConnector(PostgreConnector):
     
     def get_empty_ipo(self) -> bool:
         content = self.cursor.mogrify("""
-            select * from \"ZB_IPO\" where total_fund_rasing = 0;
+            select * from \"ZB_IPO\" where total_fund_rasing = 0 or total_fund_rasing > 544 order by update_time desc;
         """, (),)
         self.cursor.execute(content)
         ipos = self.cursor.fetchall()
         return ipos
          
+    def get_all_ipos(self) -> bool:
+        content = self.cursor.mogrify("""
+            select * from \"ZB_IPO\" order by update_time desc;
+        """, (),)
+        self.cursor.execute(content)
+        ipos = self.cursor.fetchall()
+        return ipos
+
     def is_ipo_existed(self, project_id) -> bool:
         projects = self.get_ipo(project_id)
         return len(projects) > 0
