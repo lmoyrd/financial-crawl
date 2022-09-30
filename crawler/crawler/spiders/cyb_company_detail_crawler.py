@@ -167,12 +167,11 @@ class CYBCompanyDetailSpider(scrapy.Spider):
             if is_ipo_existed:
                 is_ipo_updated = self.connector.is_ipo_updated(project_id=ipo_item.project_id, update_time=ipo_item.update_time, update_date=ipo_item.update_date)
                 trigger_item_pipeline = is_ipo_updated
-                print(f'is_ipo_existed:{is_ipo_existed}, is_ipo_updated:{is_ipo_updated}')
                 
             
 
             if trigger_item_pipeline or self.download_all:
-                print(ipo_item.to_dict())
+                print(f'is_ipo_updated:{is_ipo_updated}, {ipo_item.to_dict()}')
                 detail_params = {
                     "id": ipo_item.project_id,
                     "r": str(random.random())

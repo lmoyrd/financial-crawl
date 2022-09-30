@@ -133,7 +133,8 @@ class KCBPostgreConnector(PostgreConnector):
         projects = self.get_ipo(project_id)
         existed_projects = [item for i, item in enumerate(projects) if item['update_time'] == update_time]
         is_update = len(existed_projects) == 0
-        print('existed_projects: %s 之前更新时间：%s , 现在的时间: %s' % (projects[0]['company_name'], projects[0]['update_date'], update_date))
+        if is_update == True:
+            print('existed_projects: %s 之前更新时间：%s , 现在的时间: %s' % (projects[0]['company_name'], projects[0]['update_date'], update_date))
         return is_update
          
     def is_ipo_existed(self, project_id) -> bool:
@@ -269,7 +270,8 @@ class CYBPostgreConnector(PostgreConnector):
         projects = self.get_ipo(project_id)
         existed_projects = [item for i, item in enumerate(projects) if item['update_time'] == update_time]
         is_update = len(existed_projects) == 0
-        print('existed_projects: %s 之前更新时间：%s , 现在的时间: %s' % (projects[0]['company_name'], projects[0]['update_date'], update_date))
+        if is_update == True:
+            print('existed_projects: %s 之前更新时间：%s , 现在的时间: %s' % (projects[0]['company_name'], projects[0]['update_date'], update_date))
         return is_update
          
     def is_ipo_existed(self, project_id) -> bool:
@@ -376,7 +378,8 @@ class ZBPostgreConnector(PostgreConnector):
         projects = self.get_ipo(project_id)
         existed_projects = [item for i, item in enumerate(projects) if item['update_time'] == update_time]
         is_update = len(existed_projects) == 0
-        print('existed_projects: %s 之前更新时间：%s , 现在的时间: %s' % (projects[0]['company_name'], projects[0]['update_date'], update_date))
+        if is_update == True:
+            print('existed_projects: %s 之前更新时间：%s , 现在的时间: %s' % (projects[0]['company_name'], projects[0]['update_date'], update_date))
         return is_update
          
     def is_ipo_existed(self, project_id) -> bool:
