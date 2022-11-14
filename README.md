@@ -4,9 +4,10 @@
 ## 此项目仅用于个人研究！
 
 # 设计思路
-![](https://i.postimg.cc/Lq7Gp07H/popo-2.jpg)
 
-![](https://i.postimg.cc/sB1bbRT6/popo-1.jpg)
+<img src="https://i.postimg.cc/Y0dzhWqW/popo-2.jpg" height="100%" width="100%">
+
+<img src="https://i.postimg.cc/0jkCkfxv/popo-1.jpg" height="100%" width="100%">
 
 # 完成功能
 ## 一阶段
@@ -31,7 +32,7 @@
 - [ ] 提供客户端页面（小程序 或 web站点 或 原生端）
 - [ ] IPO公司详情数据展示
 
-![](https://i.postimg.cc/n9f5s9pg/Picsee-3.png)
+<img src="https://i.postimg.cc/xYD4dQXM/Picsee-3.png" height="100%" width="100%">
 
 
 ## 技术栈
