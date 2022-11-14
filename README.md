@@ -3,10 +3,15 @@
 
 ## 此项目仅用于个人研究！
 
+# 设计思路
+![](https://i.postimg.cc/Lq7Gp07H/popo-2.jpg)
+
+![](https://i.postimg.cc/sB1bbRT6/popo-1.jpg)
+
 # 完成功能
 ## 一阶段
 - [x] 科创板、创业板、主板数据下载
-- [x] 科创板、创业板、主板数据建模
+- [x] 科创板、创业板、主板数据建模（本事项最复杂）
 - [x] 数据写入数据库，选择的数据库为postgresql
 - [x] 定时功能，可指定时间每日自动下载
 - [x] 只更新有更新的IPO数据
@@ -15,13 +20,18 @@
 
 ## 二阶段
 - 主要任务是指标的构建，目前指标已思考完毕，待实现。
-- 基于grafana构建的自更新的指标面板：
+- [x] 基于grafana构建的自更新的指标面板：
   - 各交易所截止本日整体IPO数量、每日总量
   - 科创板本年度提交IPO，募集资金；成功IPO，募资资金；科创板本年度提交IPO按募资排序
   - 创业板本年度提交IPO，募集资金；成功IPO，募资资金；科创板本年度提交IPO按募资排序
   - 其他指标待补充
 
-![](https://i.postimg.cc/4XY7gCC3/Picsee-20221020131900.png)
+## 三阶段
+- [ ] 提供指标api服务，
+- [ ] 提供客户端页面（小程序 或 web站点 或 原生端）
+- [ ] IPO公司详情数据展示
+
+![](https://i.postimg.cc/n9f5s9pg/Picsee-3.png)
 
 
 ## 技术栈
@@ -29,10 +39,14 @@
 - scrapy
 - postgresql
 
-## todo
-- [ ] 提供指标api服务，
-- [ ] 提供客户端页面（小程序 或 web站点 或 原生端）
+
+## 启动方式
+- 安装python3.x(建议通过anaconda安装)
+- 到crawler文件下pip install安装requirements.txt相关依赖
+- 安装并运行postgresql
+- 在crawler目录下执行python crawler.py -t="10:00"，后续定时为早上10:00
 
 ## 其他
-- 启动方式可了解scrapy进行启动
+- 其他配置可查看crawler.py
 - grafana数据及postgresql建表数据见design文件夹中
+- 关于数据结构化可参考crawler/crawler/items内容。design/design.xmind根据数据和业务代码罗列现有业务逻辑
