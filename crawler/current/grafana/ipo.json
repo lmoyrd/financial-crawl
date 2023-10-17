@@ -1,0 +1,1975 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {
+          "titleSize": 8
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TO_TIMESTAMP(\"time\" / 1000)::DATE AS time,\n  \"issue_market_desc\",\n  \"business_type_desc\",\n  \"stock_exchange_desc\",\n  MAX(\"count\") as count,\n  CONCAT_WS('-', \"stock_exchange_desc\", \"issue_market_desc\", \"business_type_desc\") AS legend\nFROM \n  \"MARKET_COUNT\"\nGROUP BY \n  TO_TIMESTAMP(\"time\" / 1000)::DATE,\n  \"stock_exchange_desc\",\n  \"issue_market_desc\",\n  \"business_type_desc\"\nORDER BY \n  \"time\",\n  \"stock_exchange_desc\",\n  \"issue_market_desc\",\n  \"business_type_desc\"\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "各交易所截止本日总量",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "legend"
+          }
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "axisSoftMin": 800,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "time_series",
+          "group": [],
+          "key": "Q-06279486-ef56-4be4-b9ce-2069a665360f-0",
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TO_TIMESTAMP(\"time\" / 1000)::DATE AS time,\n  \"issue_market_desc\",\n  \"business_type_desc\",\n  \"stock_exchange_desc\",\n  MAX(\"count\") as count,\n  CONCAT_WS('-', \"stock_exchange_desc\", \"issue_market_desc\", \"business_type_desc\") AS legend\nFROM \n  \"MARKET_COUNT\"\nWHERE \n  \"issue_market_desc\" NOT IN ('沪市主板', '深市主板')\n  and count > 0\nGROUP BY \n  TO_TIMESTAMP(\"time\" / 1000)::DATE,\n  \"stock_exchange_desc\",\n  \"issue_market_desc\",\n  \"business_type_desc\"\nORDER BY \n  \"time\",\n  \"stock_exchange_desc\",\n  \"issue_market_desc\",\n  \"business_type_desc\"",
+          "refId": "PostgreSQL",
+          "select": [
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "stock_exchange_type_desc"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"MARKET_COUNT\"",
+          "timeColumn": "time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "各交易所按天总量",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "legend"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 8,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(total_fund_rasing) as \"提交IPO公司数量\"\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(total_fund_rasing) as \"提交IPO公司募资资金\"\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\nORDER BY 1",
+          "refId": "D",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(total_fund_rasing) as \"IPO成功募资资金\"\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\nand stage = 5 and stage_status = 1\nORDER BY 1",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(total_fund_rasing) as \"IPO成功公司数量\"\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\nand stage = 5 and stage_status = 1\nORDER BY 1",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(total_fund_rasing) as \"本年度IPO成功上市公司数量\"\nFROM \"SH_IPO\"\nwhere (update_time / 1000) > $__unixEpochFrom()\nand stage = 5 and stage_status = 1\nORDER BY 1",
+          "refId": "E",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(total_fund_rasing) as \"本年度IPO成功上市公司募资资金\"\nFROM \"SH_IPO\"\nwhere (update_time / 1000) > $__unixEpochFrom()\nand stage = 5 and stage_status = 1\nORDER BY 1",
+          "refId": "F",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "科创板本年度提交IPO",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "count",
+                  "电气机械和器材制造业"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 31,
+        "w": 13,
+        "x": 0,
+        "y": 35
+      },
+      "id": 9,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  csrc_desc,\n  count(*)\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\ngroup by csrc_desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "科创板本年度提交IPO",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 31,
+        "w": 11,
+        "x": 13,
+        "y": 35
+      },
+      "id": 10,
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  csrc_desc,\n  count(*)\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\ngroup by csrc_desc\norder by count(*) desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "科创板本年度提交IPO",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 24,
+        "x": 0,
+        "y": 66
+      },
+      "id": 17,
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 20,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  total_fund_rasing,\n  company_name,\n  csrc_desc\nFROM \"SH_IPO\"\nwhere (update_time / 1000) > $__unixEpochFrom()\nand stage = 5 and stage_status = 1\norder by total_fund_rasing desc\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "科创板本年度成功上市IPO募资排名",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 23,
+        "x": 0,
+        "y": 85
+      },
+      "id": 15,
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 20,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  total_fund_rasing,\n  company_name,\n  csrc_desc\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\norder by total_fund_rasing desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "科创板本年度提交IPO募资排名",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 23,
+        "x": 0,
+        "y": 104
+      },
+      "id": 11,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(total_fund_rasing) as \"提交IPO公司数量\"\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(total_fund_rasing) as \"提交IPO公司募资资金\"\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\nORDER BY 1",
+          "refId": "D",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(total_fund_rasing) as \"IPO成功募资资金\"\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\nand stage = 40 and stage_status = 70\nORDER BY 1",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(total_fund_rasing) as \"IPO成功公司数量\"\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\nand stage = 40 and stage_status = 70\nORDER BY 1",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(total_fund_rasing) as \"本年度IPO成功上市公司数量\"\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\nand stage = 40 and stage_status = 70\nORDER BY 1",
+          "refId": "E",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "创业板本年度提交IPO",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "count",
+                  "专用设备制造业"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 33,
+        "w": 12,
+        "x": 0,
+        "y": 117
+      },
+      "id": 12,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  csrc_desc,\n  count(*)\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\ngroup by csrc_desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "创业板本年度提交IPO",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 33,
+        "w": 11,
+        "x": 12,
+        "y": 117
+      },
+      "id": 13,
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  csrc_desc,\n  count(*)\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\ngroup by csrc_desc\norder by count(*) desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "创业板本年度提交IPO",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 23,
+        "x": 0,
+        "y": 150
+      },
+      "id": 18,
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 20,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  total_fund_rasing,\n  company_name,\n  csrc_desc\nFROM \"SZ_IPO\"\nwhere (update_time / 1000) > $__unixEpochFrom()\nand stage = 40 and stage_status = 70\norder by total_fund_rasing desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "创业板本年度成功IPO募资排名",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 23,
+        "x": 0,
+        "y": 169
+      },
+      "id": 16,
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 20,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 500,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  total_fund_rasing,\n  company_name,\n  csrc_desc\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\norder by total_fund_rasing desc",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "创业板本年度提交IPO募资排名",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 188
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  create_time AS \"time\",\n  total_fund_rasing,\n  company_name as legend\nFROM \"SH_IPO\"\nwhere (create_time / 1000) > $__unixEpochFrom()\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "create_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "科创板本年度提交IPO",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "legend"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 197
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  accept_apply_time AS \"time\",\n  total_fund_rasing,\n  company_name as legend\nFROM \"SZ_IPO\"\nwhere (accept_apply_time / 1000) > $__unixEpochFrom()\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"CYB_IPO\"",
+          "timeColumn": "create_time",
+          "timeColumnType": "int8",
+          "where": [
+            {
+              "name": "$__unixEpochFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "创业板本年度提交IPO",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "legend"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 206
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  update_time as time,\n  total_fund_rasing as \"value\",\n  company_name as legend\nFROM \"SH_IPO\"\nGROUP BY update_time, total_fund_rasing,legend\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"KCB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "科创板本年度更新IPO",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "legend"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "gfnw7USVz"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 214
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "gfnw7USVz"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  update_time AS \"time\",\n  total_fund_rasing,\n  company_name as legend\nFROM \"SZ_IPO\"\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "total_fund_rasing"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "company_name"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "\"CYB_IPO\"",
+          "timeColumn": "update_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "title": "创业板板本年度更新IPO",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "valueLabel": "legend"
+          }
+        }
+      ],
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "2h",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2020-12-31T16:00:00.000Z",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "ipo",
+  "uid": "-lv_V8IVz",
+  "version": 59,
+  "weekStart": "monday"
+}

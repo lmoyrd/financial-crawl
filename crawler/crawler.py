@@ -42,7 +42,7 @@ def load_spiders():
     settings = get_project_settings()
     spider_loader = spiderloader.SpiderLoader.from_settings(settings)
     spiders = spider_loader.list()
-    spider_names = [name for name in spiders]
+    spider_names = [name for name in spiders ] # if name.startswith('sh_ipo')
     print('spider_names', spider_names)
     return spider_names
 
